@@ -1,0 +1,29 @@
+body{
+	text-align: center;
+	margin: 0;
+	padding: 0;
+}
+
+select{
+	width: 330px;
+	height: 45px;
+	position: relative;
+	cursor: pointer;
+	font-size: 16px;
+	letter-spacing: 1px;
+	padding-left: 5px;
+	border: solid 1px #ccc;
+	
+	/*将默认的select选择框样式清除,此方法只适用于Chrome 和 Firefox */
+	appearance:none;
+	-moz-appearance:none;
+	-webkit-appearance:none;
+	background-image: url(arrow.png);
+	background-repeat: no-repeat;
+	background-position: 305px;
+	background-size: 15px;
+	text-shadow: 1px 1px #eee;
+	/*padding-right: 14px;*/
+
+}
+
