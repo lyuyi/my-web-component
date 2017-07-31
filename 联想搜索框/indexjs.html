@@ -1,0 +1,182 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" charset="utf-8">
+<title>bing search 搜索(js实现)</title>
+<style type="text/css">
+body{
+    background-color:#333;
+}
+.bg-div{
+    background-image:url(img/bg-img.jpg);
+    width:1228px;
+    height:690px;
+    margin:0 auto;
+    position:relative;
+}
+.logo{
+    background-image:url(img/logo.png);
+    background-repeat:no-repeat;
+    width:107px;
+    height:53px;
+    float:left;
+    margin:-4px 18px 0 0;
+}
+form{
+    float:left;
+    background-color:#fff;
+    padding:5px;
+}
+.search-text{
+    border:0;
+    float:left;
+    height:25px;
+    line-height:25px;
+    outline:none;
+    width:350px;
+}
+.search-input-button{
+    border:0;
+    background-image:url(img/search.png);
+    width:29px;
+    height:29px;
+    float:left;
+    cursor:pointer;
+}
+.search-box{
+    position:absolute;
+    top:200px;
+    left:300px;
+}
+.suggest{
+    width:388px;
+    background-color:#fff;
+    border:1px solid #999;
+}
+.suggest ul{
+    list-style:none;
+    margin:0;
+    padding:0;
+}
+.suggest ul li{
+    padding:3px;
+    font:14px;
+    line-height:25px;
+    cursor:pointer;
+}
+.suggest ul li:hover{
+    text-decoration:underline;
+    background-color:#e5e5e5;
+}
+</style>
+
+</head>
+<body>
+<!-- 输入框，按钮区域 -->
+<div class="bg-div">
+    <div class="search-box">
+        <div class="logo"></div>
+        <form action="https://cn.bing.com/search" target="_blank" id="search-form" class="search-form">
+            <input type="text" class="search-text" id="search_input" autocomplete="off">
+            <input type="submit" class="search-input-button" value="">
+        </form>
+    </div>
+</div>
+<!-- 下拉层区域 -->
+<div class="suggest" id="search-suggest" style="display:none">
+    <ul id="search-result">
+        <li>搜索结果1</li>
+        <li>搜索结果2</li>
+    </ul>
+</div>
+
+<script>
+// 封装使用ID获取页面元素的方法。
+// 现在可以使用：document.querySelector()；document.querySelectorAll()
+var getDom = function(id){
+    return document.getElementById(id);
+};
+
+// 为元素绑定事件的函数，处理浏览器的兼容性。优点是可以为同一元素绑定多个事件
+var addEvent =function(id,event,fn){
+    var el = getDom(id) || document;//容错，当用户ID不存在时使用document为事件绑定的元素
+    if(el.addEventListener){       //适用于非IE浏览器
+        el.addEventListener(event,fn,false);
+    }else if(el.attachEvent){     //IE浏览器
+        el.attachEvent('on'+event,fn);
+    }    
+};
+
+//取元素到浏览器左边的距离
+var getElementLeft =function(element){
+    var actualLeft =element.offsetLeft;//offsetLeft是获取到距离父元素左边的距离，此处父元素为form表单
+    var current = element.offsetParent;//离当前元素最近的祖先定位元素
+    while (current !== null){ //如果还有父元素，则两个相加offsetLeft得到当前element到浏览器左边距离
+        actualLeft +=current.offsetLeft;
+        current =current.offsetParent;
+    }
+    return actualLeft;
+};
+//取元素到浏览器最上边的距离
+var getElementTop =function(element){
+    var actualTop =element.offsetTop;
+    var current =element.offsetParent;
+    while(current !==null){
+        actualTop +=current.offsetTop;
+        current =current.offsetParent;
+    }
+    return actualTop;
+};
+ //封装ajaxGET函数，用于和服务器进行数据交互
+var ajaxGet =function(url,callback){
+    var _xhr=null;
+    // 创建 XMLHttpRequest 对象
+    if(window.XMLHttpRequest){//非IE浏览器
+        _xhr =new window.XMLHttpRequest();
+    }else if(window.ActiveXObject){//IE浏览器
+        _xhr =new ActiveXObject("Msxml2.XMLHTTP");
+    }
+    //当请求被发送到服务器时，我们需要执行一些基于响应的任务。
+    _xhr.onreadystatechange =function(){
+        if(_xhr.readyState == 4 && _xhr.status ==200){
+            callback(JSON.parse(_xhr.responseText));//JSON.parse()的作用是把字符串转化为JS可以识别的对象
+        }
+    };
+    //把请求发送到服务器
+    _xhr.open('get',url,false);
+    _xhr.send(null);
+};
+//封装keyup事件
+addEvent('search_input','keyup',function(){
+    var searchText =getDom('search_input').value;
+    ajaxGet('http://api.bing.com/qsonhs.aspx?q='+searchText,function(d){//将要传递的参数传给服务器。回调函数：取到服务器返回的数据并拼成html字符串
+    var d =d.AS.Results[0].Suggests;//获取服务端返回的结果存到d变量中
+    var html ='';
+    for (var i =0; i<d.length;i++){
+        html +='<li>' +d[i].Txt+'</li>';
+    }    
+    getDom('search-result').innerHTML =html;
+    // 设置下拉框的显示的位置
+    var _dom=getDom('search-suggest');
+    _dom.style.top =getElementTop(getDom('search-form'))+ 38 +'px';
+    _dom.style.left =getElementLeft(getDom('search-form'))+'px';
+    _dom.style.position ='absolute';
+    _dom.style.display ='block';
+    });   
+});
+//封装事件代理函数，当点击li时，跳转到相应的链接
+var delegateEvent=function(target,event,fn){
+    addEvent(document,event,function(e){
+        if(e.target.nodeName==target.toUpperCase()){
+            fn.call(e.target);
+        }
+    });
+};
+//调用事件代理函数
+delegateEvent('li', 'click', function() {
+    var keyword = this.innerHTML;
+    location.href='http://cn.bing.com/search?q='+keyword;
+});
+</script>
+</body>
+</html>

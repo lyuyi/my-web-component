@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UI-Compatible" content="IE=edge"><!-- 兼容性视图。解决浏览器兼容问题（适应当前最新版本IE浏览器） -->
+    <title>bing search 搜索(jq实现)</title>
+
+    <style type="text/css">
+
+    body{background-color:#333;padding: 0;margin: 0;}
+    .bg-img{background: url(img/bg-img.jpg) no-repeat;background-size: 100%;margin: 0 auto;text-align: center;height: 690px;width: 100%;}
+    .search-box{position: absolute;left: 8%;top: 23%;}
+    .logo{background: url(img/logo.png) no-repeat;width: 107px;height: 53px;float: left;margin: -8px 17px 0 0;}
+    .search-form{background-color: #fff;width: 525px;height: 45px;float: left}
+    .search-text{width: 475px;height: 40px;float: left;border: none;outline: none;font-size: 100%;line-height: 35px;}
+    .search-submit{border: none;float: left;background: url(img/search.png) no-repeat;background-size:100%;width: 50px;height: 45px;cursor: pointer;}
+
+    .suggest{width: 525px;background: #fff;border: 1px solid #999;}
+    .suggest ul{list-style: none;margin:0;padding: 0;}
+    .suggest ul li{padding: 3px;font-size: 14px;line-height: 30px;cursor: pointer;}
+    .suggest ul li:hover{background-color: #eee;}
+    </style>
+    <script src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+</head>
+<body>
+    <div class="bg-img">
+        <div class="search-box">
+            <div class="logo"></div>
+            <form class="search-form" id="search-form" action="http://cn.bing.com/search" target="_blank">
+                <input type="text" class="search-text" name="q" id="search-input" autocomplete="off" />
+                <input type="submit" class="search-submit" value="" />
+            </form>
+        </div>
+    </div>
+    <div class="suggest" id="search-suggest" style="display: none;">
+        <ul id="search-result">
+            <li>搜索结果1</li>
+            <li>搜索结果2</li>
+        </ul>
+    </div>
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+
+    <script>
+    $('#search-input').on('keyup',function(){
+        var searchText=$('#search-input').val();//获取搜索框的值（要搜索的关键词）
+         $.get('http://api.bing.com/qsonhs.aspx?q='+searchText,function(d){//从服务端请求数据
+            var d = d.AS.Results[0].Suggests;//获取服务端返回的结果存到d变量中
+            var html='';
+            for(var i=0;i<d.length;i++){//对服务器返回的结果进行遍历，
+                html+='<li>'+d[i].Txt+'</li>';
+            }
+            //把服务器返回来的结果替换到下拉列表中
+            $('#search-result').html(html);
+            //如果数据请求成功的话，就显示下拉菜单
+            $('#search-suggest').show().css({
+            top: $("#search-form").offset().top+$("#search-form").outerHeight()+"px",
+            left: $('#search-form').offset().left -1 + "px",
+            position:'absolute'
+        });
+        },'json');
+    });
+    //当点击页面上的某一处时，隐藏下拉菜单
+    $(document).bind('click',function(){
+        $('#search-suggest').hide();        
+    });
+    $(document).delegate('li','click',function(){//事件代理.delegate() 方法为指定的元素（属于被选元素的子元素）添加一个或多个事件处理程序，并规定当这些事件发生时运行的函数。
+        var keyword=$(this).text();//获取li元素里的文本
+        //相应页面跳转
+        location.href='http://cn.bing.com/search?q='+keyword;
+    });
+    </script>
+ 
+</body>
+</html>

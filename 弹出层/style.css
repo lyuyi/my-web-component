@@ -1,0 +1,151 @@
+*{
+	margin: 0;
+	padding: 0;
+}
+body{
+	background: #eee;
+	font-family: 'Verdana';
+	overflow: hidden;
+}
+.fluky a{
+	position: absolute;
+	right: 20px;
+	top: 10px;
+	background: #ddd;
+	border-radius: 10px;
+}
+.fluky img{
+	width: 50px;
+	height: 50px;
+}
+.sjx{
+	position: absolute;
+	display: inline-block;
+	width:0px;
+	height: 0px;
+	border-bottom: 115px solid #66cc99;
+	border-left: 430px solid transparent;
+	border-right:430px solid transparent;
+	border-top: 430px solid transparent;
+	left: 230px;
+	top: 132px;
+	-webkit-transition: all 0.3s;
+}
+.sjx:hover{
+	transform:scale(1.1);
+}
+.rand span{
+	position: absolute;
+	color: #66cc99;
+	top: 440px;
+	left: 550px;
+	font-size: 15px;
+}
+.start .login-btn{
+	position: relative;
+	text-transform: uppercase;
+	color: #fff;
+	font-size: 24px;
+	left: 620px;
+	top: 600px;
+	text-decoration: none;
+	background:transparent;
+    text-align:center;
+    display:block;
+    border: none;
+    cursor:pointer;
+    outline: none;
+}
+.loginCon{ 
+	position:relative; 
+	width:600px;
+	height:300px;
+	background-color: #ADD8E6;
+}
+.loginCon p{
+	position: absolute;
+	top: 100px;
+	left: 120px;
+	font-size: 40px;
+	line-height: 50px;
+	color: #66cc99;
+}
+#login{ 
+	position:fixed;
+	z-index:1001;
+}
+#close{ 
+	background:url(img/close.png) no-repeat; 
+	width:50px; 
+	height:50px; 
+	cursor:pointer; 
+	position:absolute; 
+	right:-27px; 
+	top: 7px; 
+	text-indent:-999em;
+	}
+#mask{ 
+	background-color:#ccc;
+	opacity:0.5;
+	filter: alpha(opacity=50); 
+	position:absolute; 
+	left:0;
+	top:0;
+	z-index:1000;
+}
+
+
+@keyframes mysnow{ 
+	0%{ 
+	bottom:100%; 
+	opacity:0; 
+	} 
+	50%{ 
+	opacity:1; 
+	transform: rotateX(1080deg);
+	margin-left: 50px;
+	} 
+	80%{ 
+	-webkit-transform: rotate(0deg); 
+	margin-right: 70px;
+	opacity: 1;  
+	}
+	100%{ 
+	transform: rotate(800deg); 
+	margin-left: 20px;
+	opacity: 0; 
+	bottom:0; 
+	} 
+} 
+@-webkit-keyframes mysnow{ 
+	0%{ 
+	bottom:100%; 
+	opacity:0; 
+	} 
+	50%{ 
+	opacity:1; 
+	-webkit-transform: rotateX(1080deg); 
+	margin-left: 50px;
+	} 
+	80%{ 
+	-webkit-transform: rotate(0deg); 
+	margin-right: 70px;
+	opacity: 1;  
+	} 
+	100%{ 
+	transform: rotate(800deg); 
+	margin-left: 20px;
+	opacity: 0; 
+	bottom:0; 
+	} 
+}
+.roll{ 
+	position:absolute; 
+	opacity:0; 
+	animation: mysnow 5s ; 
+	height:20px; 
+	width: 20px;
+} 
+.div{ 
+	position:fixed; 
+} 
